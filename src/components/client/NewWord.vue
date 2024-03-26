@@ -1,6 +1,6 @@
 <template>
   <el-tabs v-model="editableTabsValue" type="card" @edit="handleTabsEdit">
-    <el-tab-pane label="生词列表" name="1">
+    <el-tab-pane label="单词列表" name="1">
       <div>
         <el-table
           ref="tableBox"

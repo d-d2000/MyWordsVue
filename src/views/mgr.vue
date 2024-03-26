@@ -2,21 +2,25 @@
   <div>
     <el-container>
       <el-header>
-        <div class="title">单词翻译系统管理平台</div>
-        <div class="name">
-          <span>{{userName || "登录"}}</span>
+        <div
+          style="
+            display: flex;
+            justify-content: space-between;
+            line-height: 60px;
+            height: 60px;
+          "
+        >
+          <div class="title">单词翻译系统管理平台</div>
+          <div class="name">
+            <span>{{ userName || "登录" }}</span>
+          </div>
         </div>
       </el-header>
       <el-container>
-        <el-aside width="200px" style="background-color: rgb(238, 241, 246)">
-          <el-menu
-            background-color="#545c64"
-            text-color="#fff"
-            :router="router"
-            active-text-color="#ffd04b"
-          >
-            <el-menu-item index="/">用户列表</el-menu-item>
-            <el-menu-item index="/wordList">单词列表</el-menu-item>
+        <el-aside width="200px">
+          <el-menu :router="router" :default-active="activeIndex">
+            <el-menu-item index="/mgr">用户列表</el-menu-item>
+            <el-menu-item index="/mgr/wordList">单词列表</el-menu-item>
           </el-menu>
         </el-aside>
 
@@ -34,6 +38,7 @@
 export default {
   data() {
     return {
+      activeIndex: "/mgr",
       userName: "",
       router: true,
     };
@@ -57,7 +62,7 @@ export default {
 .el-aside {
   color: #333;
 }
-.main{
+.main {
   height: calc(100vh - 60px);
   padding: 10px;
 }

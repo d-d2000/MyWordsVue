@@ -49,10 +49,16 @@
           <Mark :windowHeight="windowHeight" :windowWidth="windowWidth"></Mark>
         </div>
         <div v-show="activeIndexNumber === 3">
-          <History :windowHeight="windowHeight" :windowWidth="windowWidth"></History>
+          <History
+            :windowHeight="windowHeight"
+            :windowWidth="windowWidth"
+          ></History>
         </div>
         <div v-show="activeIndexNumber === 4">
-          <RandomWord :windowHeight="windowHeight" :windowWidth="windowWidth"></RandomWord>
+          <RandomWord
+            :windowHeight="windowHeight"
+            :windowWidth="windowWidth"
+          ></RandomWord>
         </div>
       </el-main>
     </el-container>
@@ -93,7 +99,7 @@ export default {
     NewWord: NewWord,
     Mark: Mark,
     History: History,
-    RandomWord: RandomWord
+    RandomWord: RandomWord,
   },
   data() {
     return {
@@ -117,16 +123,11 @@ export default {
     console.log(this.windowHeight);
     console.log(this.windowWidth);
 
-    // var userStr = localStorage.getItem("user");
-    // if (userStr) {
-    //   var user = JSON.parse(userStr);
-    //   this.userName = user.name;
-    // } else {
-    //   var user = {
-    //     name: "张三",
-    //   };
-    //   localStorage.setItem("user", JSON.stringify(user));
-    // }
+    var userStr = sessionStorage.getItem("user");
+    if (userStr) {
+      var user = JSON.parse(userStr);
+      this.userName = user.name;
+    }
   },
   methods: {
     showReg() {
@@ -153,14 +154,21 @@ export default {
         }).then(
           (response) => {
             console.log("response", response);
-            this.$message({
-              message: response.data.msg,
-              type: "warning",
-            });
             if (!response.data.success) {
+              this.$message({
+                message: response.data.msg,
+                type: "warning",
+              });
               return;
+            } else {
+              this.$message({
+                message: response.data.msg,
+                type: "success",
+              });
             }
             this.dialogFormVisible = false;
+            sessionStorage.setItem("user", JSON.stringify(response.data.data));
+            this.userName = response.data.data.name;
 
             return response.data;
           },
@@ -175,14 +183,22 @@ export default {
         }).then(
           (response) => {
             console.log("response", response);
-            this.$message({
-              message: response.data.msg,
-              type: "warning",
-            });
+
             if (!response.data.success) {
+              this.$message({
+                message: response.data.msg,
+                type: "warning",
+              });
               return;
+            } else {
+              this.$message({
+                message: response.data.msg,
+                type: "success",
+              });
             }
             this.dialogFormVisible = false;
+            sessionStorage.setItem("user", JSON.stringify(response.data.data));
+            this.userName = response.data.data.name;
             return response.data;
           },
           (error) => {

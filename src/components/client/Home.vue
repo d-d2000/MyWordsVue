@@ -27,6 +27,7 @@
           </el-input>
         </div>
         <el-button @click="addTab">添加到Tab页</el-button>
+        <el-button>添加到生词本</el-button>
         <div style="width:700px">
           <div>{{word ? word.name : ""}}</div>
           <br>

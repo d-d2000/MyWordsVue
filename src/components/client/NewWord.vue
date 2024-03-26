@@ -40,7 +40,7 @@
         :windowWidth="windowWidth"
         v-show="item.name == editableTabsValue"
         :is="item.content"
-        :data="item.args.data"
+        :origin_data="item.args.data"
       ></component>
     </el-tab-pane>
   </el-tabs>

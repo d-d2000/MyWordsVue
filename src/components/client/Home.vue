@@ -27,7 +27,11 @@
           </el-input>
         </div>
         <el-button @click="addTab">添加到Tab页</el-button>
-        <WordDetail :data="word"></WordDetail>
+        <div style="width:700px">
+          <div>{{word ? word.name : ""}}</div>
+          <br>
+          <div>{{word ? word.translation : ""}}</div>
+        </div>
       </div>
     </el-tab-pane>
     <el-tab-pane
@@ -42,7 +46,7 @@
         :windowWidth="windowWidth"
         v-show="item.name == editableTabsValue"
         :is="item.content"
-        :data="item.args.data"
+        :origin_data="item.args.data"
       ></component>
     </el-tab-pane>
   </el-tabs>

@@ -16,7 +16,7 @@
 
 export default {
   props: {
-    data: {
+    origin_data: {
       type: Object,
       default: null,
     },
@@ -30,17 +30,14 @@ export default {
   data() {
     return {
       contentHeight: 0,
+      data: null,
       name: "",
       translation: [],
     };
   },
-  watch: {
-    data() {
-      this.dataChange();
-    },
-  },
   created() {
     this.contentHeight = this.windowHeight - 155;
+    this.data = this.origin_data;
     this.dataChange();
   },
   mounted() {},

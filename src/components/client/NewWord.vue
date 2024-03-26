@@ -9,22 +9,49 @@
           stripe
           @cell-click="cellClick"
         >
-          <el-table-column prop="uid" label="生词编号" width="100">
+          <el-table-column type="index" label="编号" width="60">
           </el-table-column>
-          <el-table-column prop="name" label="名称"> </el-table-column>
-          <el-table-column label="操作">
+          <el-table-column prop="newWords" label="单词">
             <template slot-scope="scope">
-              <el-button type="text" size="small">查看</el-button>
-              <el-button type="text" size="small" v-if="scope.row.type == 1"
-                >禁用</el-button
+              <a href="#">{{ scope.row.newWords }}</a></template
+            >
+          </el-table-column>
+          <el-table-column prop="newWordsMean" label="释义" width="500">
+          </el-table-column>
+          <el-table-column prop="wordsState" label="单词记住状态">
+            <template slot-scope="scope">
+              {{ scope.row.wordsState ? "已记住" : "未记住" }}</template
+            >
+          </el-table-column>
+          <el-table-column prop="createTime" label="创建时间">
+          </el-table-column>
+          <el-table-column label="操作" width="100">
+            <template slot-scope="scope">
+              <el-button
+                @click="updateNewWord(scope.row)"
+                type="text"
+                size="small"
+                v-if="scope.row.wordsState"
+                >标为未记住</el-button
               >
-              <el-button type="text" size="small" v-if="scope.row.type == 0"
-                >解禁</el-button
+              <el-button
+                @click="updateNewWord(scope.row)"
+                type="text"
+                size="small"
+                v-if="!scope.row.wordsState"
+                >标为记住</el-button
               >
             </template>
           </el-table-column>
         </el-table>
-        <el-pagination background layout="prev, pager, next" :total="1000">
+        <el-pagination
+          background
+          layout="prev, pager, next"
+          :total="total"
+          :page-size="pageSize"
+          :current-page.sync="currentPage"
+          @current-change="handleCurrentChange"
+        >
         </el-pagination>
       </div>
     </el-tab-pane>
@@ -66,27 +93,84 @@ export default {
       editableTabs: [],
       tabIndex: 2,
       tableData: [],
+      currentPage: 1,
+      total: 0,
+      pageSize: 20,
     };
   },
   computed: {},
   created() {
     this.contentHeight = this.windowHeight - 155;
-    for (let i = 1; i <= 200; i++) {
-      this.tableData.push({ uid: i, name: "单词" + i });
-    }
+    this.loadData();
   },
   mounted() {},
   methods: {
+    updateNewWord(row) {
+      var args = JSON.parse(JSON.stringify(row));
+      args.wordsState = !args.wordsState;
+      console.info("提交修改", args);
+      this.$axios({
+        url: "myServer/yipai/wordsInfo/update",
+        params: args,
+      }).then(
+        (response) => {
+          console.log("response", response);
+          this.$message({
+            message: response.data.msg,
+            type: "success",
+          });
+          if (!response.data.success) {
+            return;
+          }
+          row.wordsState = !row.wordsState;
+          return response.data;
+        },
+        (error) => {
+          console.log("错误", error.message);
+        }
+      );
+    },
     cellClick(row, column, cell, event) {
       // console.info(row, column, cell, event);
-      if (column.property == "name") {
+      if (column.property == "newWords") {
         this.addTab(row);
       }
+    },
+    handleCurrentChange() {
+      this.loadData();
+    },
+    loadData() {
+      var args = {
+        start: this.currentPage,
+        limit: this.pageSize,
+      };
+      console.info("查询", args);
+      this.$axios({
+        url: "myServer/yipai/wordsInfo/getWords",
+        params: args,
+      }).then(
+        (response) => {
+          console.log("response", response);
+          if (!response.data.success) {
+            this.$message({
+              message: response.data.msg,
+              type: "success",
+            });
+            return;
+          }
+          this.tableData = response.data.data.records;
+          this.total = response.data.data.total;
+          return response.data;
+        },
+        (error) => {
+          console.log("错误", error.message);
+        }
+      );
     },
     addTab(row) {
       let newTabName = ++this.tabIndex + "";
       this.editableTabs.push({
-        title: row.name + "-详情",
+        title: row.newWords + "-详情",
         name: newTabName,
         content: "WordDetail",
         closable: true,

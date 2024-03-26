@@ -14,22 +14,31 @@
           stripe
           @cell-click="cellClick"
         >
-          <el-table-column prop="uid" label="笔记编号" width="100">
+          <el-table-column type="index" label="编号" width="60">
           </el-table-column>
-          <el-table-column prop="notepadInfo" label="名称"> </el-table-column>
-          <el-table-column label="操作">
+          <el-table-column prop="notepadInfo" label="内容">
             <template slot-scope="scope">
-              <el-button type="text" size="small">查看</el-button>
-              <el-button type="text" size="small" v-if="scope.row.type == 1"
-                >禁用</el-button
-              >
-              <el-button type="text" size="small" v-if="scope.row.type == 0"
-                >解禁</el-button
+              <a href="#">{{ scope.row.notepadInfo }}</a></template
+            >
+          </el-table-column>
+          <el-table-column prop="createTime" label="创建时间">
+          </el-table-column>
+          <el-table-column label="操作" width="100">
+            <template slot-scope="scope">
+              <el-button @click="del(scope.row)" type="text" size="small"
+                >删除</el-button
               >
             </template>
           </el-table-column>
         </el-table>
-        <el-pagination background layout="prev, pager, next" :total="1000">
+        <el-pagination
+          background
+          layout="prev, pager, next"
+          :total="total"
+          :page-size="pageSize"
+          :current-page.sync="currentPage"
+          @current-change="handleCurrentChange"
+        >
         </el-pagination>
       </div>
     </el-tab-pane>
@@ -72,30 +81,86 @@ export default {
       editableTabs: [],
       tabIndex: 2,
       tableData: [],
+      currentPage: 1,
+      total: 0,
+      pageSize: 20,
     };
   },
   computed: {},
   created() {
     this.contentHeight = this.windowHeight - 155;
-    for (let i = 1; i <= 200; i++) {
-      this.tableData.push({ uid: i, notepadInfo: "笔记" + i });
-    }
+    this.loadData();
   },
   mounted() {},
   methods: {
+    del(row) {
+      var args = JSON.parse(JSON.stringify(row));
+      console.info("提交", args);
+      this.$axios({
+        url: "myServer/yipai/notepadInfo/delete",
+        params: args,
+      }).then(
+        (response) => {
+          console.log("response", response);
+          this.$message({
+            message: response.data.msg,
+            type: "success",
+          });
+          if (!response.data.success) {
+            return;
+          }
+          this.loadData();
+          return response.data;
+        },
+        (error) => {
+          console.log("错误", error.message);
+        }
+      );
+    },
     cellClick(row, column, cell, event) {
       // console.info(row, column, cell, event);
       if (column.property == "notepadInfo") {
         let newTabName = ++this.tabIndex + "";
-      this.editableTabs.push({
-        title: row.notepadInfo,
-        name: newTabName,
-        content: "MarkDetail",
-        closable: true,
-        args: { data: row, action: "view" },
-      });
-      this.editableTabsValue = newTabName;
+        this.editableTabs.push({
+          title: row.notepadInfo,
+          name: newTabName,
+          content: "MarkDetail",
+          closable: true,
+          args: { data: row, action: "view" },
+        });
+        this.editableTabsValue = newTabName;
       }
+    },
+    handleCurrentChange() {
+      this.loadData();
+    },
+    loadData() {
+      var args = {
+        start: this.currentPage,
+        limit: this.pageSize,
+      };
+      console.info("查询", args);
+      this.$axios({
+        url: "myServer/yipai/notepadInfo/getNotepad",
+        params: args,
+      }).then(
+        (response) => {
+          console.log("response", response);
+          if (!response.data.success) {
+            this.$message({
+              message: response.data.msg,
+              type: "success",
+            });
+            return;
+          }
+          this.tableData = response.data.data.records;
+          this.total = response.data.data.total;
+          return response.data;
+        },
+        (error) => {
+          console.log("错误", error.message);
+        }
+      );
     },
     handleTabsEdit(targetName, action) {
       if (action === "add") {

@@ -18,8 +18,10 @@
           </el-input>
         </div>
         <el-row>
-          <el-button @click="addTab">添加到Tab页</el-button>
-          <el-button @click="addNewWord">添加到生词本</el-button>
+          <!-- <el-button @click="addTab">添加到Tab页</el-button> -->
+          <el-button :disabled="disabledAddNewWord" @click="addNewWord"
+            >添加到生词本</el-button
+          >
         </el-row>
 
         <div style="width: 700px">
@@ -65,6 +67,7 @@ export default {
   },
   data() {
     return {
+      disabledAddNewWord: false,
       searchText: "",
       type: "en::zh-CHS",
       keyText: "",
@@ -80,17 +83,27 @@ export default {
   },
   mounted() {},
   methods: {
-    addNewWord(){
-      var args = {};
+    addNewWord() {
+      var args = {
+        newWords: this.word.name,
+        newWordsMean: this.word.translation,
+        wordsState: false,
+      };
+      console.info("提交", args);
       this.$axios({
-        url: "myServer",
+        url: "myServer/yipai/wordsInfo/add",
         params: args,
       }).then(
         (response) => {
-          console.log(
-            "response.data",
-            JSON.parse(JSON.stringify(response.data))
-          );
+          console.log("response", response);
+          this.$message({
+            message: response.data.msg,
+            type: "success",
+          });
+          if (!response.data.success) {
+            return;
+          }
+          this.disabledAddNewWord = true;
           return response.data;
         },
         (error) => {
@@ -147,24 +160,25 @@ export default {
             });
             return;
           }
-          if (response.data.translation[0] == response.data.query) {
-            response.data.isNoTrans = true;
-            this.$message({
-              message: "请输入英文",
-              type: "warning",
-            });
-            return;
-          }
+          // if (response.data.translation[0] == response.data.query) {
+          //   response.data.isNoTrans = true;
+          //   this.$message({
+          //     message: "请输入英文",
+          //     type: "warning",
+          //   });
+          //   return;
+          // }
           var word = {};
 
           if (response.data.basic) {
-            word.translation = response.data.basic.explains;
+            word.translation = response.data.basic.explains.join(";");
           }
           if (response.data.query) {
             word.name = response.data.query;
           }
 
           me.word = word;
+          this.disabledAddNewWord = false;
           return response.data;
         },
         (error) => {

@@ -5,9 +5,7 @@
     </div>
     <br />
     <div>
-      <div v-for="(item, index) in translation" :key="'translation' + index">
-        {{ item }}
-      </div>
+      {{ translation }}
     </div>
   </div>
 </template>
@@ -32,7 +30,7 @@ export default {
       contentHeight: 0,
       data: null,
       name: "",
-      translation: [],
+      translation: "",
     };
   },
   created() {
@@ -49,11 +47,11 @@ export default {
         return;
       }
       console.log("data", JSON.parse(JSON.stringify(this.data)));
-      if (this.data.translation) {
-        this.translation = this.data.translation;
+      if (this.data.newWordsMean) {
+        this.translation = this.data.newWordsMean;
       }
-      if (this.data.name) {
-        this.name = this.data.name;
+      if (this.data.newWords) {
+        this.name = this.data.newWords;
       }
     },
   },

@@ -24,9 +24,12 @@
             </el-menu>
           </div>
           <div class="name">
-            <span @click="showLogin">{{
-              userName || "登录"
-            }}</span>
+            <span v-show="userName">{{ userName }}</span>
+            <span
+              ><span @click="showLogin">登录</span>/<span @click="showReg"
+                >注册</span
+              ></span
+            >
           </div>
         </div>
         <div style="width: 100%; height: 1px; background: #eee"></div>
@@ -46,7 +49,10 @@
         </div>
       </el-main>
     </el-container>
-    <el-dialog title="登录/注册" :visible.sync="dialogFormVisible">
+    <el-dialog
+      :title="formType == 'login' ? '登录' : '注册'"
+      :visible.sync="dialogFormVisible"
+    >
       <el-form :model="form">
         <el-form-item label="账号" :label-width="formLabelWidth">
           <el-input v-model="form.userName" autocomplete="off"></el-input>
@@ -61,9 +67,7 @@
       </el-form>
       <div slot="footer" class="dialog-footer">
         <el-button @click="cancel">取 消</el-button>
-        <el-button type="primary" @click="submit"
-          >确 定</el-button
-        >
+        <el-button type="primary" @click="submit">确 定</el-button>
       </div>
     </el-dialog>
   </div>
@@ -82,6 +86,7 @@ export default {
   },
   data() {
     return {
+      formType: "login",
       dialogFormVisible: false,
       form: {
         userName: "",
@@ -113,39 +118,67 @@ export default {
     // }
   },
   methods: {
-    showLogin(){
-      if(!this.userName) {
-        this.dialogFormVisible = true;
-      }
+    showReg() {
+      this.formType = "register";
+      this.dialogFormVisible = true;
     },
-    cancel(){
-      console.info("取消")
+    showLogin() {
+      this.formType = "login";
+      this.dialogFormVisible = true;
+    },
+    cancel() {
       this.dialogFormVisible = false;
     },
-    submit(){
+    submit() {
       var args = {
         userName: this.form.userName,
-        userPwd: this.form.userPwd
+        pwd: this.form.userPwd,
       };
-      console.info("提交", args)
-      this.$axios({
-        url: "myServer/yipai/userInfo/register",
-        params: args,
-      }).then(
-        (response) => {
-          console.log(
-            "response.data",
-            JSON.parse(JSON.stringify(response.data))
-          );
-          this.dialogFormVisible = false;
-          return response.data;
-        },
-        (error) => {
-          console.log("错误", error.message);
-        }
-      );
+      console.info("提交", args);
+      if (this.formType == "register") {
+        this.$axios({
+          url: "myServer/yipai/userInfo/register",
+          params: args,
+        }).then(
+          (response) => {
+            console.log("response", response);
+            this.$message({
+              message: response.data.msg,
+              type: "warning",
+            });
+            if (!response.data.success) {
+              return;
+            }
+            this.dialogFormVisible = false;
 
-      
+            return response.data;
+          },
+          (error) => {
+            console.log("错误", error.message);
+          }
+        );
+      } else if (this.formType == "login") {
+        this.$axios({
+          url: "myServer/yipai/userInfo/login",
+          params: args,
+        }).then(
+          (response) => {
+            console.log("response", response);
+            this.$message({
+              message: response.data.msg,
+              type: "warning",
+            });
+            if (!response.data.success) {
+              return;
+            }
+            this.dialogFormVisible = false;
+            return response.data;
+          },
+          (error) => {
+            console.log("错误", error.message);
+          }
+        );
+      }
     },
     handleChange(value) {
       console.log(value);

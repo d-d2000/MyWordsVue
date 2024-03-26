@@ -76,6 +76,33 @@ export default {
   },
   mounted() {},
   methods: {
+    update(action) {
+      var args = JSON.parse(JSON.stringify(this.data));
+      args.notepadInfo = this.notepadInfo;
+      console.info("提交", action, args);
+      this.$axios({
+        url: "myServer/yipai/notepadInfo/" + action,
+        params: args,
+      }).then(
+        (response) => {
+          console.log("response", response);
+          this.$message({
+            message: response.data.msg,
+            type: "success",
+          });
+          if (!response.data.success) {
+            return;
+          }
+          this.action = "view";
+          this.data = response.data.data;
+          this.notepadInfo = this.data.notepadInfo;
+          return response.data;
+        },
+        (error) => {
+          console.log("错误", error.message);
+        }
+      );
+    },
     cancel() {
       this.$confirm("是否取消?", "提示", {
         confirmButtonText: "确定",
@@ -92,8 +119,11 @@ export default {
       this.action = "update";
     },
     save() {
-      this.action = "view";
-      this.data.notepadInfo = this.notepadInfo;
+      if (this.action == "add") {
+        this.update("add");
+      } else if (this.action == "update") {
+        this.update("update");
+      }
     },
     dataChange() {
       console.info("this.data", this.data);

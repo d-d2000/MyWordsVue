@@ -1,32 +1,40 @@
 <template>
   <div id="app">
-    <nav>
-      <router-link to="/">Home</router-link> |
-      <router-link to="/about">About</router-link>
-    </nav>
-    <router-view/>
+    <!-- 不想跳转到新页面，只在当前页面切换着显示，那么就要涉及到路由的嵌套 -->
+    <router-view></router-view>
   </div>
 </template>
+<script>
+// @ is an alias to /src
+
+export default {
+  data() {
+    return {};
+  },
+  methods: {},
+};
+</script>
 
 <style lang="scss">
 #app {
   font-family: Avenir, Helvetica, Arial, sans-serif;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
-  text-align: center;
+  // text-align: center;
   color: #2c3e50;
+  width: 100%;
+  height: 100vh;
 }
-
-nav {
-  padding: 30px;
-
-  a {
-    font-weight: bold;
-    color: #2c3e50;
-
-    &.router-link-exact-active {
-      color: #42b983;
-    }
-  }
+// .el-header {
+//   display: flex;
+//   justify-content: space-between;
+//   line-height: 60px;
+//   height: 60px;
+// }
+// .el-card__body, .el-main {
+//   padding: 0px 20px !important;
+// }
+.myinput .el-input__inner {
+  height: 52px;
 }
 </style>

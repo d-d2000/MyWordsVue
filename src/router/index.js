@@ -1,27 +1,58 @@
-import Vue from 'vue'
-import VueRouter from 'vue-router'
-import HomeView from '../views/HomeView.vue'
+import Vue from "vue";
+import VueRouter from "vue-router";
 
-Vue.use(VueRouter)
+Vue.use(VueRouter);
 
 const routes = [
   {
-    path: '/',
-    name: 'home',
-    component: HomeView
+    //用户主页
+    path: "/",
+    component: () => import("../views/client.vue"),
+    children: [
+      {
+        //查单词面板
+        path: "/",
+        component: () => import("../components/client/Home.vue"),
+        children: [
+          {
+            //单词详情
+            path: "/",
+            component: () => import("../components/client/WordDetail.vue"),
+          },
+        ],
+      },
+      {
+        path: "/newWord",
+        component: () => import("../components/client/NewWord.vue"),
+      },
+      {
+        path: "/mark",
+        component: () => import("../components/client/Mark.vue"),
+      },
+      {
+        path: "/history",
+        component: () => import("../components/client/History.vue"),
+      },
+    ],
   },
   {
-    path: '/about',
-    name: 'about',
-    // route level code-splitting
-    // this generates a separate chunk (about.[hash].js) for this route
-    // which is lazy-loaded when the route is visited.
-    component: () => import(/* webpackChunkName: "about" */ '../views/AboutView.vue')
-  }
-]
+    path: "/mgr",
+    component: () => import("../views/mgr.vue"),
+    children: [
+      {
+        path: "/",
+        component: () => import("../components/mgr/UserList.vue"),
+      },
+      {
+        path: "/wordList",
+        component: () => import("../components/mgr/WordList.vue"),
+      },
+    ],
+  },
+];
 
 const router = new VueRouter({
-  routes
-})
+  routes,
+});
 
-export default router
+export default router;

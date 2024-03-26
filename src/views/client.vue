@@ -18,15 +18,26 @@
               @select="handleChange"
             >
               <el-menu-item class="item" index="0">首页</el-menu-item>
-              <el-menu-item class="item" index="1">生词本</el-menu-item>
-              <el-menu-item class="item" index="2">记事本</el-menu-item>
-              <el-menu-item class="item" index="3">历史记录</el-menu-item>
-              <el-menu-item class="item" index="4">随机单词</el-menu-item>
+              <el-menu-item :disabled="!userName" class="item" index="1"
+                >生词本</el-menu-item
+              >
+              <el-menu-item :disabled="!userName" class="item" index="2"
+                >记事本</el-menu-item
+              >
+              <el-menu-item :disabled="!userName" class="item" index="3"
+                >历史记录</el-menu-item
+              >
+              <el-menu-item :disabled="!userName" class="item" index="4"
+                >随机单词</el-menu-item
+              >
+              <el-menu-item :disabled="!userName" class="item" index="5"
+                >统计</el-menu-item
+              >
             </el-menu>
           </div>
           <div class="name">
             <span v-show="userName">{{ userName }}</span>
-            <span
+            <span v-show="!userName"
               ><span @click="showLogin">登录</span>/<span @click="showReg"
                 >注册</span
               ></span
@@ -60,6 +71,12 @@
             :windowWidth="windowWidth"
           ></RandomWord>
         </div>
+        <div v-if="activeIndexNumber === 5">
+          <Chart
+            :windowHeight="windowHeight"
+            :windowWidth="windowWidth"
+          ></Chart>
+        </div>
       </el-main>
     </el-container>
     <el-dialog
@@ -92,6 +109,7 @@ import NewWord from "../components/client/NewWord.vue";
 import Mark from "../components/client/Mark.vue";
 import History from "../components/client/History.vue";
 import RandomWord from "../components/client/RandomWord.vue";
+import Chart from "../components/client/Chart.vue";
 
 export default {
   components: {
@@ -100,6 +118,7 @@ export default {
     Mark: Mark,
     History: History,
     RandomWord: RandomWord,
+    Chart: Chart,
   },
   data() {
     return {
@@ -126,7 +145,7 @@ export default {
     var userStr = sessionStorage.getItem("user");
     if (userStr) {
       var user = JSON.parse(userStr);
-      this.userName = user.name;
+      this.userName = user.userName;
     }
   },
   methods: {
@@ -168,7 +187,7 @@ export default {
             }
             this.dialogFormVisible = false;
             sessionStorage.setItem("user", JSON.stringify(response.data.data));
-            this.userName = response.data.data.name;
+            this.userName = response.data.data.userName;
 
             return response.data;
           },
@@ -198,7 +217,7 @@ export default {
             }
             this.dialogFormVisible = false;
             sessionStorage.setItem("user", JSON.stringify(response.data.data));
-            this.userName = response.data.data.name;
+            this.userName = response.data.data.userName;
             return response.data;
           },
           (error) => {

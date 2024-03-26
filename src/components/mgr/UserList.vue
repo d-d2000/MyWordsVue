@@ -33,9 +33,6 @@
               v-if="!scope.row.userState"
               >启用</el-button
             >
-            <el-button @click="del(scope.row)" type="text" size="small"
-              >删除</el-button
-            >
           </template>
         </el-table-column>
       </el-table>
@@ -71,30 +68,6 @@ export default {
   },
   mounted() {},
   methods: {
-    del(row) {
-      var args = JSON.parse(JSON.stringify(row));
-      console.info("提交", args);
-      this.$axios({
-        url: "myServer/yipai/userInfo/delete",
-        params: args,
-      }).then(
-        (response) => {
-          console.log("response", response);
-          this.$message({
-            message: response.data.msg,
-            type: "success",
-          });
-          if (!response.data.success) {
-            return;
-          }
-          this.loadData();
-          return response.data;
-        },
-        (error) => {
-          console.log("错误", error.message);
-        }
-      );
-    },
     handleCurrentChange() {
       this.loadData();
     },

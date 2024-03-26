@@ -12,7 +12,7 @@
         >
           <div class="title">单词翻译系统管理平台</div>
           <div class="name">
-            <span>{{ userName || "登录" }}</span>
+            <span v-show="userName">{{ userName }}</span>
           </div>
         </div>
       </el-header>
@@ -42,6 +42,13 @@ export default {
       userName: "",
       router: true,
     };
+  },
+  created() {
+    var userStr = sessionStorage.getItem("user");
+    if (userStr) {
+      var user = JSON.parse(userStr);
+      this.userName = user.userName;
+    }
   },
   methods: {
     handleChange(value) {

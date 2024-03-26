@@ -46,7 +46,7 @@ export default {
         },
         tooltip: {
           trigger: "item",
-          formatter: "{a} <br/>{b}: {c}({d}%)",
+          formatter: "{a} <br/>{b}: {d}%",
         },
         legend: {
           orient: "vertical",
@@ -72,18 +72,17 @@ export default {
       },
       option1: {
         title: {
-          text: "每日单词统计-柱状图",
+          text: "单词记忆占比分析-柱状图",
           left: "center",
         },
         tooltip: {
           trigger: "item",
-          formatter: "{a} <br/>{b} : {c}({d}%)",
         },
         xAxis: { data: [] },
         yAxis: {},
         series: [
           {
-            name: "分类新闻数量",
+            name: "单词记忆占比分析",
             type: "bar",
             data: [],
           },
@@ -106,8 +105,24 @@ export default {
       }).then(
         (response) => {
           console.log("response", response);
-          this.stateList = response.data.stateList;
-          this.timeList = response.data.timeList;
+          var stateList = response.data.stateList;
+          var timeList = response.data.timeList;
+
+          var count = stateList[0].c1 + stateList[1].c1;
+          var complete = stateList[0].c1 / count;
+          var uncomplete = stateList[1].c1 / count;
+
+          this.option.series[0].data = [{
+            name: "已记住",
+            value: complete
+          }, {
+            name: "未记住",
+            value: uncomplete
+          }];
+
+          this.option1.xAxis.data = ["已记住","未记住"];
+          this.option1.series[0].data = [stateList[0].c1, stateList[1].c1];
+
 
           // var data1 = [];
           // var data2 = [];

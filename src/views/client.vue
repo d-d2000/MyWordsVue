@@ -21,6 +21,7 @@
               <el-menu-item class="item" index="1">生词本</el-menu-item>
               <el-menu-item class="item" index="2">记事本</el-menu-item>
               <el-menu-item class="item" index="3">历史记录</el-menu-item>
+              <el-menu-item class="item" index="4">随机单词</el-menu-item>
             </el-menu>
           </div>
           <div class="name">
@@ -49,6 +50,9 @@
         </div>
         <div v-show="activeIndexNumber === 3">
           <History :windowHeight="windowHeight" :windowWidth="windowWidth"></History>
+        </div>
+        <div v-show="activeIndexNumber === 4">
+          <RandomWord :windowHeight="windowHeight" :windowWidth="windowWidth"></RandomWord>
         </div>
       </el-main>
     </el-container>
@@ -81,13 +85,15 @@ import Home from "../components/client/Home.vue";
 import NewWord from "../components/client/NewWord.vue";
 import Mark from "../components/client/Mark.vue";
 import History from "../components/client/History.vue";
+import RandomWord from "../components/client/RandomWord.vue";
 
 export default {
   components: {
     Home: Home,
     NewWord: NewWord,
     Mark: Mark,
-    History: History
+    History: History,
+    RandomWord: RandomWord
   },
   data() {
     return {

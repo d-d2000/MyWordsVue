@@ -1,10 +1,10 @@
 <template>
   <el-tabs v-model="editableTabsValue" type="card" @edit="handleTabsEdit">
-    <el-tab-pane label="生词列表" name="1">
+    <el-tab-pane label="单词列表" name="1">
       <div>
         <el-table
           ref="tableBox"
-          :height="contentHeight - 32"
+          :height="contentHeight"
           :data="tableData"
           stripe
           @cell-click="cellClick"
@@ -17,6 +17,9 @@
             >
           </el-table-column>
           <el-table-column prop="newWordsMean" label="释义" width="500">
+            <template slot-scope="scope">
+              {{ scope.row.showMean == true ? scope.row.newWordsMean : "-" }}</template
+            >
           </el-table-column>
           <el-table-column prop="wordsState" label="单词记住状态">
             <template slot-scope="scope">
@@ -27,6 +30,12 @@
           </el-table-column>
           <el-table-column label="操作" width="200">
             <template slot-scope="scope">
+              <el-button
+                @click="scope.row.showMean = !scope.row.showMean"
+                type="text"
+                size="small"
+                >{{scope.row.showMean ? "隐藏释义":"显示释义"}}</el-button
+              >
               <el-button
                 @click="updateNewWord(scope.row)"
                 type="text"
@@ -41,13 +50,10 @@
                 v-if="!scope.row.wordsState"
                 >标为记住</el-button
               >
-              <el-button @click="del(scope.row)" type="text" size="small"
-                >删除</el-button
-              >
             </template>
           </el-table-column>
         </el-table>
-        <el-pagination
+        <!-- <el-pagination
           background
           layout="prev, pager, next"
           :total="total"
@@ -55,7 +61,7 @@
           :current-page.sync="currentPage"
           @current-change="handleCurrentChange"
         >
-        </el-pagination>
+        </el-pagination> -->
       </div>
     </el-tab-pane>
     <el-tab-pane
@@ -173,20 +179,15 @@ export default {
       };
       console.info("查询", args);
       this.$axios({
-        url: "myServer/yipai/wordsInfo/getWords",
+        url: "myServer/yipai/wordsInfo/getRandomWords",
         params: args,
       }).then(
         (response) => {
           console.log("response", response);
-          if (!response.data.success) {
-            this.$message({
-              message: response.data.msg,
-              type: "success",
-            });
-            return;
-          }
-          this.tableData = response.data.data.records;
-          this.total = response.data.data.total;
+          response.data.forEach(o => {
+            o.showMean = false;
+          });
+          this.tableData = response.data;
           return response.data;
         },
         (error) => {

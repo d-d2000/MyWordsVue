@@ -8,15 +8,6 @@
             v-model="searchText"
             class="myinput"
           >
-            <el-select
-              style="width: 140px"
-              v-model="type"
-              slot="prepend"
-              placeholder="请选择"
-            >
-              <el-option label="英文 > 中文" value="en::zh-CHS"></el-option>
-              <el-option label="中文 > 英文" value="zh-CHS::en"></el-option>
-            </el-select>
             <el-button
               @click="search"
               style="width: 150px"
@@ -26,12 +17,15 @@
             >
           </el-input>
         </div>
-        <el-button @click="addTab">添加到Tab页</el-button>
-        <el-button>添加到生词本</el-button>
-        <div style="width:700px">
-          <div>{{word ? word.name : ""}}</div>
-          <br>
-          <div>{{word ? word.translation : ""}}</div>
+        <el-row>
+          <el-button @click="addTab">添加到Tab页</el-button>
+          <el-button @click="addNewWord">添加到生词本</el-button>
+        </el-row>
+
+        <div style="width: 700px">
+          <div>{{ word ? word.name : "" }}</div>
+          <br />
+          <div>{{ word ? word.translation : "" }}</div>
         </div>
       </div>
     </el-tab-pane>
@@ -86,6 +80,24 @@ export default {
   },
   mounted() {},
   methods: {
+    addNewWord(){
+      var args = {};
+      this.$axios({
+        url: "myServer",
+        params: args,
+      }).then(
+        (response) => {
+          console.log(
+            "response.data",
+            JSON.parse(JSON.stringify(response.data))
+          );
+          return response.data;
+        },
+        (error) => {
+          console.log("错误", error.message);
+        }
+      );
+    },
     search() {
       this.word = null;
 
@@ -138,7 +150,7 @@ export default {
           if (response.data.translation[0] == response.data.query) {
             response.data.isNoTrans = true;
             this.$message({
-              message: "请切换翻译模式",
+              message: "请输入英文",
               type: "warning",
             });
             return;

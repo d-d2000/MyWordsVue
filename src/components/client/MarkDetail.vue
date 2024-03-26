@@ -94,7 +94,12 @@ export default {
             return;
           }
           this.action = "view";
-          this.data = response.data.data;
+          if (action == "add") {
+            this.data = response.data.data;
+          } else {
+            this.data = args;
+          }
+
           this.notepadInfo = this.data.notepadInfo;
           return response.data;
         },

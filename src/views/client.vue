@@ -47,6 +47,9 @@
         <div v-show="activeIndexNumber === 2">
           <Mark :windowHeight="windowHeight" :windowWidth="windowWidth"></Mark>
         </div>
+        <div v-show="activeIndexNumber === 3">
+          <History :windowHeight="windowHeight" :windowWidth="windowWidth"></History>
+        </div>
       </el-main>
     </el-container>
     <el-dialog
@@ -77,12 +80,14 @@
 import Home from "../components/client/Home.vue";
 import NewWord from "../components/client/NewWord.vue";
 import Mark from "../components/client/Mark.vue";
+import History from "../components/client/History.vue";
 
 export default {
   components: {
     Home: Home,
     NewWord: NewWord,
     Mark: Mark,
+    History: History
   },
   data() {
     return {

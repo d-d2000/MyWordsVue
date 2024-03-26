@@ -19,7 +19,7 @@
         </div>
         <el-row>
           <!-- <el-button @click="addTab">添加到Tab页</el-button> -->
-          <el-button :disabled="disabledAddNewWord" @click="addNewWord"
+          <el-button v-show="word" :disabled="disabledAddNewWord" @click="addNewWord"
             >添加到生词本</el-button
           >
         </el-row>
@@ -83,7 +83,27 @@ export default {
   },
   mounted() {},
   methods: {
+    addNewHistory() {
+      var args = {
+        historyWord: this.word.name,
+        historyMean: this.word.translation
+      };
+      console.info("提交历史记录", args);
+      this.$axios({
+        url: "myServer/yipai/historyInfo/add",
+        params: args,
+      }).then(
+        (response) => {
+          console.log("response", response);
+          return response.data;
+        },
+        (error) => {
+          console.log("错误", error.message);
+        }
+      );
+    },
     addNewWord() {
+      if(!this.word) return;
       var args = {
         newWords: this.word.name,
         newWordsMean: this.word.translation,
@@ -178,6 +198,7 @@ export default {
           }
 
           me.word = word;
+          this.addNewHistory();
           this.disabledAddNewWord = false;
           return response.data;
         },

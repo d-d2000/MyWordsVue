@@ -122,7 +122,7 @@ export default {
       if (column.property == "notepadInfo") {
         let newTabName = ++this.tabIndex + "";
         this.editableTabs.push({
-          title: row.notepadInfo,
+          title: row.notepadInfo.substring(0,10),
           name: newTabName,
           content: "MarkDetail",
           closable: true,

@@ -10,6 +10,7 @@ import { use } from 'echarts/core'
 import { CanvasRenderer } from 'echarts/renderers'
 import { BarChart } from 'echarts/charts'
 import { GridComponent, TooltipComponent } from 'echarts/components'
+import CryptoJS from "crypto-js"
 
 Vue.config.productionTip = false
 
@@ -38,6 +39,13 @@ Vue.filter("dateFilter", function (dataStr) {
   var sec = dt.getSeconds();
   return `${year}年${month}月${day}日 ${hour}:${minute}:${sec}`
 });
+
+Vue.prototype.youdao = {
+  appKey: "695964bc75e4efd0",
+  key: "h8fw78HDfrYxJVVlJwvPsF9fqkttehRK"
+};
+
+Vue.prototype.CryptoJS = CryptoJS;
 
 
 new Vue({

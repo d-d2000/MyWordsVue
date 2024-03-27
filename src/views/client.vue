@@ -50,22 +50,22 @@
         <div v-show="activeIndexNumber === 0">
           <Home :windowHeight="windowHeight" :windowWidth="windowWidth"></Home>
         </div>
-        <div v-show="activeIndexNumber === 1">
+        <div v-if="activeIndexNumber === 1">
           <NewWord
             :windowHeight="windowHeight"
             :windowWidth="windowWidth"
           ></NewWord>
         </div>
-        <div v-show="activeIndexNumber === 2">
+        <div v-if="activeIndexNumber === 2">
           <Mark :windowHeight="windowHeight" :windowWidth="windowWidth"></Mark>
         </div>
-        <div v-show="activeIndexNumber === 3">
+        <div v-if="activeIndexNumber === 3">
           <History
             :windowHeight="windowHeight"
             :windowWidth="windowWidth"
           ></History>
         </div>
-        <div v-show="activeIndexNumber === 4">
+        <div v-if="activeIndexNumber === 4">
           <RandomWord
             :windowHeight="windowHeight"
             :windowWidth="windowWidth"

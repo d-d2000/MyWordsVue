@@ -34,9 +34,7 @@
           @click="edit"
         ></el-button>
       </el-row>
-      <div :style="{ height: contentHeight - 50 + 'px' }">
-        {{ notepadInfo }}
-      </div>
+      <div :style="{ height: contentHeight - 50 + 'px' }" v-html="displaynotepadInfo"></div>
     </div>
   </div>
 </template>
@@ -73,6 +71,11 @@ export default {
     this.action = this.origin_action;
     this.data = this.origin_data;
     this.dataChange();
+  },
+  computed:{
+    displaynotepadInfo(){
+      return this.notepadInfo.split("\n").join("<br/>");
+    }
   },
   mounted() {},
   methods: {

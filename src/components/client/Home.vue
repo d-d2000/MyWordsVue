@@ -1,10 +1,11 @@
 <template>
   <el-tabs v-model="editableTabsValue" type="card" @edit="handleTabsEdit">
-    <el-tab-pane label="查询" name="1">
+    <el-tab-pane label="单词查询" name="1">
       <div :style="{ height: contentHeight + 'px' }">
         <div style="width: 700px; margin: 0 auto; padding: 100px 0 50px 0">
           <el-input
-            placeholder="请输入内容"
+            @input="handleInput"
+            placeholder="请输入英文单词"
             v-model="searchText"
             class="myinput"
           >
@@ -17,17 +18,45 @@
             >
           </el-input>
         </div>
-        <el-row>
-          <!-- <el-button @click="addTab">添加到Tab页</el-button> -->
-          <el-button v-show="word" :disabled="disabledAddNewWord" @click="addNewWord"
-            >添加到生词本</el-button
-          >
-        </el-row>
-
-        <div style="width: 700px">
+        <div style="width: 1000px; margin: 0 auto">
+          <el-row>
+            <!-- <el-button @click="addTab">添加到Tab页</el-button> -->
+            <el-button v-show="word" @click="see">查看详情</el-button>
+            <el-button
+              v-show="word"
+              :disabled="disabledAddNewWord"
+              @click="addNewWord"
+              >添加到生词本</el-button
+            >
+          </el-row>
+          <br />
           <div>{{ word ? word.name : "" }}</div>
           <br />
-          <div>{{ word ? word.translation : "" }}</div>
+          <div v-html="means"></div>
+        </div>
+      </div>
+    </el-tab-pane>
+    <el-tab-pane label="翻译" name="2">
+      <div :style="{ height: contentHeight + 'px' }">
+        <div style="width: 700px; margin: 0 auto; padding: 100px 0 50px 0">
+          <el-input
+            placeholder="请输入句子"
+            v-model="searchText2"
+            class="myinput"
+          >
+            <el-button
+              @click="search2"
+              style="width: 150px"
+              slot="append"
+              icon="el-icon-search"
+              >翻译</el-button
+            >
+          </el-input>
+        </div>
+        <div style="width: 1000px; margin: 0 auto">
+          <div>{{ word2 ? word2.name : "" }}</div>
+          <br />
+          <div v-html="means2"></div>
         </div>
       </div>
     </el-tab-pane>
@@ -51,7 +80,6 @@
 <script>
 // @ is an alias to /src
 import WordDetail from "./WordDetail.vue";
-import CryptoJS from "crypto-js";
 
 export default {
   components: {
@@ -69,24 +97,38 @@ export default {
     return {
       disabledAddNewWord: false,
       searchText: "",
-      type: "en::zh-CHS",
+      searchText2: "",
       keyText: "",
       word: null,
+      word2: null,
       contentHeight: 0,
       editableTabsValue: "1",
       editableTabs: [],
-      tabIndex: 2,
+      tabIndex: 3,
     };
   },
   created() {
     this.contentHeight = this.windowHeight - 155;
   },
+  computed: {
+    means() {
+      if (this.word) return this.word.translation.split("\n").join("<br/>");
+      else return "";
+    },
+    means2() {
+      if (this.word2) return this.word2.translation.split("\n").join("<br/>");
+      else return "";
+    },
+  },
   mounted() {},
   methods: {
+    handleInput() {
+      this.searchText = this.searchText.replace(/[^A-Za-z]/g, "");
+    },
     addNewHistory() {
       var args = {
         historyWord: this.word.name,
-        historyMean: this.word.translation
+        historyMean: this.word.translation,
       };
       console.info("提交历史记录", args);
       this.$axios({
@@ -103,7 +145,7 @@ export default {
       );
     },
     addNewWord() {
-      if(!this.word) return;
+      if (!this.word) return;
       var args = {
         newWords: this.word.name,
         newWordsMean: this.word.translation,
@@ -131,23 +173,26 @@ export default {
         }
       );
     },
+    change() {
+      this.search();
+    },
+    change2() {
+      this.search2();
+    },
     search() {
+      if (!this.searchText) return;
       this.word = null;
 
-      this.keyText = this.searchText;
-      var appKey = "695964bc75e4efd0";
-      var key = "h8fw78HDfrYxJVVlJwvPsF9fqkttehRK"; //注意：暴露appSecret，有被盗用造成损失的风险
+      var appKey = this.youdao.appKey;
+      var key = this.youdao.key; //注意：暴露appSecret，有被盗用造成损失的风险
       var salt = new Date().getTime();
       var curtime = Math.round(new Date().getTime() / 1000);
-      var query = this.keyText;
-      // 多个query可以用\n连接  如 query='apple\norange\nbanana\npear'
-      var typeArr = this.type.split("::");
-      var from = typeArr[0];
-      var to = typeArr[1];
+      var query = this.searchText;
+      var to = "zh-CHS";
       var str1 = appKey + truncate(query) + salt + curtime + key;
       //var vocabId = "您的用户词表ID";
       //console.log('---',str1);
-      var sign = CryptoJS.SHA256(str1).toString(CryptoJS.enc.Hex);
+      var sign = this.CryptoJS.SHA256(str1).toString(this.CryptoJS.enc.Hex);
 
       var me = this;
       var args = {
@@ -155,7 +200,7 @@ export default {
         q: query,
         appKey: appKey,
         salt: salt,
-        from: from,
+        from: "en",
         to: to,
         sign: sign,
         signType: "v3",
@@ -173,29 +218,23 @@ export default {
             JSON.parse(JSON.stringify(response.data))
           );
 
-          if (!response.data.isWord) {
+          if (
+            !response.data.isWord ||
+            !response.data.basic ||
+            !response.data.basic.explains
+          ) {
             this.$message({
-              message: "无法查询到该词",
+              message: "无法查询到该单词",
               type: "warning",
             });
             return;
           }
-          // if (response.data.translation[0] == response.data.query) {
-          //   response.data.isNoTrans = true;
-          //   this.$message({
-          //     message: "请输入英文",
-          //     type: "warning",
-          //   });
-          //   return;
-          // }
           var word = {};
-
-          if (response.data.basic) {
-            word.translation = response.data.basic.explains.join(";");
+          if (response.data.basic && response.data.basic.explains) {
+            word.translation = response.data.basic.explains.join("\n");
           }
-          if (response.data.query) {
-            word.name = response.data.query;
-          }
+          //word.translation = response.data.translation.join("\n");
+          word.name = response.data.query;
 
           me.word = word;
           this.addNewHistory();
@@ -213,15 +252,74 @@ export default {
         return q.substring(0, 10) + len + q.substring(len - 10, len);
       }
     },
-    addTab() {
-      if (!this.word) return;
+    search2() {
+      if (!this.searchText2) return;
+      this.word2 = null;
+
+      var appKey = this.youdao.appKey;
+      var key = this.youdao.key; //注意：暴露appSecret，有被盗用造成损失的风险
+      var salt = new Date().getTime();
+      var curtime = Math.round(new Date().getTime() / 1000);
+      var query = this.searchText2;
+      var to = "zh-CHS";
+      var str1 = appKey + truncate(query) + salt + curtime + key;
+      //var vocabId = "您的用户词表ID";
+      //console.log('---',str1);
+      var sign = this.CryptoJS.SHA256(str1).toString(this.CryptoJS.enc.Hex);
+
+      var me = this;
+      var args = {
+        strict: true,
+        q: query,
+        appKey: appKey,
+        salt: salt,
+        to: to,
+        sign: sign,
+        signType: "v3",
+        curtime: curtime,
+        //vocabId: vocabId,
+      };
+      console.info("args", args);
+      this.$axios({
+        url: "youdaofanyi",
+        params: args,
+      }).then(
+        (response) => {
+          console.log(
+            "response.data",
+            JSON.parse(JSON.stringify(response.data))
+          );
+
+          var word = {};
+          word.translation = response.data.translation.join("\n");
+          word.name = response.data.query;
+
+          me.word2 = word;
+          return response.data;
+        },
+        (error) => {
+          console.log("错误", error.message);
+        }
+      );
+
+      function truncate(q) {
+        var len = q.length;
+        if (len <= 20) return q;
+        return q.substring(0, 10) + len + q.substring(len - 10, len);
+      }
+    },
+    see() {
+      var obj = {
+        newWords: this.word.name,
+        newWordsMean: this.word.translation,
+      };
       let newTabName = ++this.tabIndex + "";
       this.editableTabs.push({
         title: this.word.name + "-详情",
         name: newTabName,
         content: "WordDetail",
         closable: true,
-        args: { data: this.word },
+        args: { data: obj },
       });
       this.editableTabsValue = newTabName;
     },

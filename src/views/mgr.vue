@@ -12,7 +12,17 @@
         >
           <div class="title">单词翻译系统管理平台</div>
           <div class="name">
-            <span v-show="userName">{{ userName }}</span>
+            <el-dropdown
+              v-show="userName"
+              trigger="click"
+              @command="handleCommand"
+            >
+              <span>{{ userName }}</span>
+              <el-dropdown-menu slot="dropdown">
+                <el-dropdown-item command="exit">退出</el-dropdown-item>
+              </el-dropdown-menu>
+            </el-dropdown>
+            <!-- <span v-show="userName">{{ userName }}</span> -->
           </div>
         </div>
       </el-header>
@@ -44,15 +54,25 @@ export default {
     };
   },
   created() {
-    var userStr = sessionStorage.getItem("user");
+    var userStr = localStorage.getItem("mgruser");
     if (userStr) {
       var user = JSON.parse(userStr);
       this.userName = user.userName;
+    } else {
+      this.$router.push({
+        path: "/mgrlogin",
+      });
     }
   },
   methods: {
+    handleCommand(command) {
+      if (command == "exit") {
+        localStorage.removeItem("mgruser");
+        window.location.reload();
+      }
+    },
     handleChange(value) {
-      console.log(value);
+      //console.log(value);
     },
   },
 };

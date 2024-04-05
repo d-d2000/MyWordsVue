@@ -127,13 +127,13 @@ export default {
   methods: {
     loadData() {
       var args = {};
-      console.info("查询", args);
+      //console.info("查询", args);
       this.$axios({
         url: "myServer/yipai/wordsInfo/getCharts",
         params: args,
       }).then(
         (response) => {
-          console.log("response", response);
+          //console.log("response", response);
           var stateList = response.data.stateList;
           var timeList = response.data.timeList;
 
@@ -186,7 +186,7 @@ export default {
           return response.data;
         },
         (error) => {
-          console.log("错误", error.message);
+          //console.log("错误", error.message);
         }
       );
     },

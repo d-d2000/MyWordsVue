@@ -82,13 +82,13 @@ export default {
     update(action) {
       var args = JSON.parse(JSON.stringify(this.data));
       args.notepadInfo = this.notepadInfo;
-      console.info("提交", action, args);
+      //console.info("提交", action, args);
       this.$axios({
         url: "myServer/yipai/notepadInfo/" + action,
         params: args,
       }).then(
         (response) => {
-          console.log("response", response);
+          //console.log("response", response);
           this.$message({
             message: response.data.msg,
             type: "success",
@@ -107,7 +107,7 @@ export default {
           return response.data;
         },
         (error) => {
-          console.log("错误", error.message);
+          //console.log("错误", error.message);
         }
       );
     },
@@ -134,7 +134,7 @@ export default {
       }
     },
     dataChange() {
-      console.info("this.data", this.data);
+      //console.info("this.data", this.data);
       if (!this.data) {
         this.notepadInfo = "";
         return;

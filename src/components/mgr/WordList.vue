@@ -60,13 +60,13 @@ export default {
   methods: {
     del(row) {
       var args = JSON.parse(JSON.stringify(row));
-      console.info("提交", args);
+      //console.info("提交", args);
       this.$axios({
         url: "myServer/yipai/wordsInfo/delete",
         params: args,
       }).then(
         (response) => {
-          console.log("response", response);
+          //console.log("response", response);
           this.$message({
             message: response.data.msg,
             type: "success",
@@ -78,7 +78,7 @@ export default {
           return response.data;
         },
         (error) => {
-          console.log("错误", error.message);
+          //console.log("错误", error.message);
         }
       );
     },
@@ -90,13 +90,13 @@ export default {
         start: this.currentPage,
         limit: this.pageSize,
       };
-      console.info("查询", args);
+      //console.info("查询", args);
       this.$axios({
         url: "myServer/yipai/wordsInfo/getWords",
         params: args,
       }).then(
         (response) => {
-          console.log("response", response);
+          //console.log("response", response);
           if (!response.data.success) {
             this.$message({
               message: response.data.msg,
@@ -109,7 +109,7 @@ export default {
           return response.data;
         },
         (error) => {
-          console.log("错误", error.message);
+          //console.log("错误", error.message);
         }
       );
     },

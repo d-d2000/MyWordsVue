@@ -1,5 +1,5 @@
 <template>
-  <div v-show="data" :style="{ height: contentHeight + 'px',padding: '20px' }">
+  <div v-show="data" :style="{ height: contentHeight + 'px',padding: '20px', 'overflow-y':'auto' }">
     <div class="title">
       {{ name }}
     </div>
@@ -79,7 +79,7 @@ export default {
       var to = "zh-CHS";
       var str1 = appKey + truncate(query) + salt + curtime + key;
       //var vocabId = "您的用户词表ID";
-      //console.log('---',str1);
+      ////console.log('---',str1);
       var sign = this.CryptoJS.SHA256(str1).toString(this.CryptoJS.enc.Hex);
 
       var me = this;
@@ -95,16 +95,13 @@ export default {
         curtime: curtime,
         //vocabId: vocabId,
       };
-      console.info("args", args);
+      //console.info("args", args);
       this.$axios({
         url: "youdaofanyi",
         params: args,
       }).then(
         (response) => {
-          console.log(
-            "response.data",
-            JSON.parse(JSON.stringify(response.data))
-          );
+ 
 
           if (response.data.basic && response.data.basic.explains) {
             this.translation = response.data.basic.explains.join("\n");
@@ -123,7 +120,7 @@ export default {
           return response.data;
         },
         (error) => {
-          console.log("错误", error.message);
+          //console.log("错误", error.message);
         }
       );
 

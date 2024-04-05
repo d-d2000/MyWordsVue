@@ -41,13 +41,13 @@ export default {
         userName: this.form.userName,
         pwd: this.form.userPwd,
       };
-      console.info("提交", args);
+      //console.info("提交", args);
       this.$axios({
-        url: "myServer/yipai/userInfo/login",
+        url: "myServer/yipai/userInfo/mgrLogin",
         params: args,
       }).then(
         (response) => {
-          console.log("response", response);
+          //console.log("response", response);
           if (!response.data.success) {
             this.$message({
               message: response.data.msg,
@@ -60,7 +60,7 @@ export default {
               type: 'success'
             });
           }
-          sessionStorage.setItem("user", JSON.stringify(response.data.data));
+          localStorage.setItem("mgruser", JSON.stringify(response.data.data));
           this.$router.push({
             path: "/mgr",
           });
@@ -68,7 +68,7 @@ export default {
           return response.data;
         },
         (error) => {
-          console.log("错误", error.message);
+          //console.log("错误", error.message);
         }
       );
     },

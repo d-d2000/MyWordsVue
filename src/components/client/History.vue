@@ -96,13 +96,13 @@ export default {
   methods: {
     del(row) {
       var args = JSON.parse(JSON.stringify(row));
-      console.info("提交", args);
+      //console.info("提交", args);
       this.$axios({
         url: "myServer/yipai/historyInfo/delete",
         params: args,
       }).then(
         (response) => {
-          console.log("response", response);
+          //console.log("response", response);
           this.$message({
             message: response.data.msg,
             type: "success",
@@ -114,12 +114,12 @@ export default {
           return response.data;
         },
         (error) => {
-          console.log("错误", error.message);
+          //console.log("错误", error.message);
         }
       );
     },
     cellClick(row, column, cell, event) {
-      // console.info(row, column, cell, event);
+      // //console.info(row, column, cell, event);
       if (column.property == "historyWord") {
         this.addTab(row);
       }
@@ -132,13 +132,13 @@ export default {
         start: this.currentPage,
         limit: this.pageSize,
       };
-      console.info("查询", args);
+      //console.info("查询", args);
       this.$axios({
         url: "myServer/yipai/historyInfo/getNotepad",
         params: args,
       }).then(
         (response) => {
-          console.log("response", response);
+          //console.log("response", response);
           if (!response.data.success) {
             this.$message({
               message: response.data.msg,
@@ -151,7 +151,7 @@ export default {
           return response.data;
         },
         (error) => {
-          console.log("错误", error.message);
+          //console.log("错误", error.message);
         }
       );
     },

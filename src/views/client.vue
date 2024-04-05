@@ -36,9 +36,20 @@
             </el-menu>
           </div>
           <div class="name">
-            <span v-show="userName">{{ userName }}</span>
+            <el-dropdown
+              v-show="userName"
+              trigger="click"
+              @command="handleCommand"
+            >
+              <span>{{ userName }}</span>
+              <el-dropdown-menu slot="dropdown">
+                <el-dropdown-item command="exit">退出</el-dropdown-item>
+              </el-dropdown-menu>
+            </el-dropdown>
+            <!-- <span v-show="userName">{{ userName }}</span> -->
             <span v-show="!userName"
-              ><span @click="showLogin">登录</span>&nbsp;/&nbsp;<span @click="showReg"
+              ><span @click="showLogin">登录</span>&nbsp;/&nbsp;<span
+                @click="showReg"
                 >注册</span
               ></span
             >
@@ -48,30 +59,34 @@
       </el-header>
       <el-main>
         <div v-show="activeIndexNumber === 0">
-          <Home :userName="userName" :windowHeight="windowHeight" :windowWidth="windowWidth"></Home>
+          <Home
+            :userName="userName"
+            :windowHeight="windowHeight"
+            :windowWidth="windowWidth"
+          ></Home>
         </div>
-        <div  v-if="activeIndexNumber === 1">
+        <div v-if="activeIndexNumber === 1">
           <NewWord
             :windowHeight="windowHeight"
             :windowWidth="windowWidth"
           ></NewWord>
         </div>
-        <div  v-if="activeIndexNumber === 2">
+        <div v-if="activeIndexNumber === 2">
           <Mark :windowHeight="windowHeight" :windowWidth="windowWidth"></Mark>
         </div>
-        <div  v-if="activeIndexNumber === 3">
+        <div v-if="activeIndexNumber === 3">
           <History
             :windowHeight="windowHeight"
             :windowWidth="windowWidth"
           ></History>
         </div>
-        <div  v-if="activeIndexNumber === 4">
+        <div v-if="activeIndexNumber === 4">
           <RandomWord
             :windowHeight="windowHeight"
             :windowWidth="windowWidth"
           ></RandomWord>
         </div>
-        <div  v-if="activeIndexNumber === 5">
+        <div v-if="activeIndexNumber === 5">
           <Chart
             :windowHeight="windowHeight"
             :windowWidth="windowWidth"
@@ -139,16 +154,22 @@ export default {
     };
   },
   created() {
-    console.log(this.windowHeight);
-    console.log(this.windowWidth);
+    //console.log(this.windowHeight);
+    //console.log(this.windowWidth);
 
-    var userStr = sessionStorage.getItem("user");
+    var userStr = localStorage.getItem("user");
     if (userStr) {
       var user = JSON.parse(userStr);
       this.userName = user.userName;
     }
   },
   methods: {
+    handleCommand(command) {
+      if (command == "exit") {
+        localStorage.removeItem("user");
+        window.location.reload();
+      }
+    },
     showReg() {
       this.formType = "register";
       this.dialogFormVisible = true;
@@ -165,14 +186,14 @@ export default {
         userName: this.form.userName,
         pwd: this.form.userPwd,
       };
-      console.info("提交", args);
+      //console.info("提交", args);
       if (this.formType == "register") {
         this.$axios({
           url: "myServer/yipai/userInfo/register",
           params: args,
         }).then(
           (response) => {
-            console.log("response", response);
+            //console.log("response", response);
             if (!response.data.success) {
               this.$message({
                 message: response.data.msg,
@@ -186,13 +207,14 @@ export default {
               });
             }
             this.dialogFormVisible = false;
-            sessionStorage.setItem("user", JSON.stringify(response.data.data));
-            this.userName = response.data.data.userName;
+            localStorage.setItem("user", JSON.stringify(response.data.data));
+            //this.userName = response.data.data.userName;
+            window.location.reload();
 
             return response.data;
           },
           (error) => {
-            console.log("错误", error.message);
+            //console.log("错误", error.message);
           }
         );
       } else if (this.formType == "login") {
@@ -201,7 +223,7 @@ export default {
           params: args,
         }).then(
           (response) => {
-            console.log("response", response);
+            //console.log("response", response);
 
             if (!response.data.success) {
               this.$message({
@@ -216,18 +238,19 @@ export default {
               });
             }
             this.dialogFormVisible = false;
-            sessionStorage.setItem("user", JSON.stringify(response.data.data));
-            this.userName = response.data.data.userName;
+            localStorage.setItem("user", JSON.stringify(response.data.data));
+            //this.userName = response.data.data.userName;
+            window.location.reload();
             return response.data;
           },
           (error) => {
-            console.log("错误", error.message);
+            //console.log("错误", error.message);
           }
         );
       }
     },
     handleChange(value) {
-      console.log(value);
+      //console.log(value);
       this.activeIndexNumber = Number(value);
     },
   },

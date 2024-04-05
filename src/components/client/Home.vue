@@ -29,10 +29,14 @@
               >添加到生词本</el-button
             >
           </el-row>
+          <!-- <br />
+          <div>{{ word ? word.name : "" }}</div> -->
           <br />
-          <div>{{ word ? word.name : "" }}</div>
-          <br />
-          <div v-html="means"></div>
+          <div v-show="word">
+            <div style="font-weight:bold;">中文释义：</div>
+            <br/>
+            <div v-html="means"></div>
+          </div>
         </div>
       </div>
     </el-tab-pane>
@@ -54,9 +58,13 @@
           </el-input>
         </div>
         <div style="width: 1000px; margin: 0 auto">
-          <div>{{ word2 ? word2.name : "" }}</div>
+          <!-- <div>{{ word2 ? word2.name : "" }}</div> -->
           <br />
-          <div v-html="means2"></div>
+          <div v-show="word2">
+            <div style="font-weight:bold;">中文释义：</div>
+            <br/>
+            <div v-html="means2"></div>
+          </div>
         </div>
       </div>
     </el-tab-pane>
@@ -135,17 +143,17 @@ export default {
         historyWord: this.word.name,
         historyMean: this.word.translation,
       };
-      console.info("提交历史记录", args);
+      //console.info("提交历史记录", args);
       this.$axios({
         url: "myServer/yipai/historyInfo/add",
         params: args,
       }).then(
         (response) => {
-          console.log("response", response);
+          //console.log("response", response);
           return response.data;
         },
         (error) => {
-          console.log("错误", error.message);
+          //console.log("错误", error.message);
         }
       );
     },
@@ -157,13 +165,13 @@ export default {
         newWordsMean: this.word.translation,
         wordsState: false,
       };
-      console.info("提交", args);
+      //console.info("提交", args);
       this.$axios({
         url: "myServer/yipai/wordsInfo/add",
         params: args,
       }).then(
         (response) => {
-          console.log("response", response);
+          //console.log("response", response);
           this.$message({
             message: response.data.msg,
             type: "success",
@@ -175,7 +183,7 @@ export default {
           return response.data;
         },
         (error) => {
-          console.log("错误", error.message);
+          //console.log("错误", error.message);
         }
       );
     },
@@ -197,7 +205,7 @@ export default {
       var to = "zh-CHS";
       var str1 = appKey + truncate(query) + salt + curtime + key;
       //var vocabId = "您的用户词表ID";
-      //console.log('---',str1);
+      ////console.log('---',str1);
       var sign = this.CryptoJS.SHA256(str1).toString(this.CryptoJS.enc.Hex);
 
       var me = this;
@@ -213,16 +221,12 @@ export default {
         curtime: curtime,
         //vocabId: vocabId,
       };
-      console.info("args", args);
+      //console.info("args", args);
       this.$axios({
         url: "youdaofanyi",
         params: args,
       }).then(
         (response) => {
-          console.log(
-            "response.data",
-            JSON.parse(JSON.stringify(response.data))
-          );
 
           if (
             !response.data.isWord ||
@@ -248,7 +252,7 @@ export default {
           return response.data;
         },
         (error) => {
-          console.log("错误", error.message);
+          //console.log("错误", error.message);
         }
       );
 
@@ -270,7 +274,7 @@ export default {
       var to = "zh-CHS";
       var str1 = appKey + truncate(query) + salt + curtime + key;
       //var vocabId = "您的用户词表ID";
-      //console.log('---',str1);
+      ////console.log('---',str1);
       var sign = this.CryptoJS.SHA256(str1).toString(this.CryptoJS.enc.Hex);
 
       var me = this;
@@ -285,16 +289,13 @@ export default {
         curtime: curtime,
         //vocabId: vocabId,
       };
-      console.info("args", args);
+      //console.info("args", args);
       this.$axios({
         url: "youdaofanyi",
         params: args,
       }).then(
         (response) => {
-          console.log(
-            "response.data",
-            JSON.parse(JSON.stringify(response.data))
-          );
+
 
           var word = {};
           word.translation = response.data.translation.join("\n");
@@ -304,7 +305,7 @@ export default {
           return response.data;
         },
         (error) => {
-          console.log("错误", error.message);
+          //console.log("错误", error.message);
         }
       );
 

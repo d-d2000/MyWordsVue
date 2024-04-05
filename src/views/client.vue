@@ -38,7 +38,7 @@
           <div class="name">
             <span v-show="userName">{{ userName }}</span>
             <span v-show="!userName"
-              ><span @click="showLogin">登录</span>/<span @click="showReg"
+              ><span @click="showLogin">登录</span>&nbsp;/&nbsp;<span @click="showReg"
                 >注册</span
               ></span
             >
@@ -48,30 +48,30 @@
       </el-header>
       <el-main>
         <div v-show="activeIndexNumber === 0">
-          <Home :windowHeight="windowHeight" :windowWidth="windowWidth"></Home>
+          <Home :userName="userName" :windowHeight="windowHeight" :windowWidth="windowWidth"></Home>
         </div>
-        <div v-if="activeIndexNumber === 1">
+        <div  v-if="activeIndexNumber === 1">
           <NewWord
             :windowHeight="windowHeight"
             :windowWidth="windowWidth"
           ></NewWord>
         </div>
-        <div v-if="activeIndexNumber === 2">
+        <div  v-if="activeIndexNumber === 2">
           <Mark :windowHeight="windowHeight" :windowWidth="windowWidth"></Mark>
         </div>
-        <div v-if="activeIndexNumber === 3">
+        <div  v-if="activeIndexNumber === 3">
           <History
             :windowHeight="windowHeight"
             :windowWidth="windowWidth"
           ></History>
         </div>
-        <div v-if="activeIndexNumber === 4">
+        <div  v-if="activeIndexNumber === 4">
           <RandomWord
             :windowHeight="windowHeight"
             :windowWidth="windowWidth"
           ></RandomWord>
         </div>
-        <div v-if="activeIndexNumber === 5">
+        <div  v-if="activeIndexNumber === 5">
           <Chart
             :windowHeight="windowHeight"
             :windowWidth="windowWidth"

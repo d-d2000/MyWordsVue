@@ -1,11 +1,16 @@
 <template>
-  <div :style="{ height: contentHeight + 'px' }">
+  <div style="padding: 20px">
     <el-row>
       <el-col style="height: 400px" :span="12"
         ><v-chart class="chart" :option="option"
       /></el-col>
       <el-col style="height: 400px" :span="12"
         ><v-chart class="chart" :option="option1"
+      /></el-col>
+    </el-row>
+    <el-row>
+      <el-col style="height: 300px" :span="12"
+        ><v-chart class="chart" :option="option2"
       /></el-col>
     </el-row>
   </div>
@@ -15,6 +20,7 @@
 import { use } from "echarts/core";
 import { CanvasRenderer } from "echarts/renderers";
 import { PieChart } from "echarts/charts";
+import { LineChart } from 'echarts/charts';
 import {
   TitleComponent,
   TooltipComponent,
@@ -22,6 +28,7 @@ import {
 } from "echarts/components";
 import VChart, { THEME_KEY } from "vue-echarts";
 use([
+  LineChart,
   CanvasRenderer,
   PieChart,
   TitleComponent,
@@ -41,7 +48,7 @@ export default {
     return {
       option: {
         title: {
-          text: "单词记忆占比分析-饼图",
+          text: "单词记忆占比-饼图",
           left: "center",
         },
         tooltip: {
@@ -55,7 +62,7 @@ export default {
         },
         series: [
           {
-            name: "单词记忆占比分析-饼图",
+            name: "单词记忆占比-饼图",
             type: "pie",
             radius: "55%",
             center: ["50%", "60%"],
@@ -72,7 +79,7 @@ export default {
       },
       option1: {
         title: {
-          text: "单词记忆占比分析-柱状图",
+          text: "单词记忆占比-柱状图",
           left: "center",
         },
         tooltip: {
@@ -82,9 +89,31 @@ export default {
         yAxis: {},
         series: [
           {
-            name: "单词记忆占比分析",
+            name: "单词记忆占比",
             type: "bar",
             data: [],
+          },
+        ],
+      },
+      option2: {
+        title: {
+          text: "每日学习单词量",
+          left: "center",
+        },
+        xAxis: {
+          type: "category",
+          data: [],
+        },
+        yAxis: {},
+        series: [
+          {
+            type: "line",
+            data: [],
+            label: {
+              show: true,
+              fontSize: 16,
+              position: "top",
+            },
           },
         ],
       },
@@ -109,20 +138,25 @@ export default {
           var timeList = response.data.timeList;
 
           var count = stateList[0].c1 + stateList[1].c1;
-          var complete = stateList[0].c1 / count;
-          var uncomplete = stateList[1].c1 / count;
+          var complete = stateList[1].c1 / count;
+          var uncomplete = stateList[0].c1 / count;
 
-          this.option.series[0].data = [{
-            name: "已记住",
-            value: complete
-          }, {
-            name: "未记住",
-            value: uncomplete
-          }];
+          this.option.series[0].data = [
+            {
+              name: "已记住",
+              value: complete,
+            },
+            {
+              name: "未记住",
+              value: uncomplete,
+            },
+          ];
 
-          this.option1.xAxis.data = ["已记住","未记住"];
+          this.option1.xAxis.data = ["已记住", "未记住"];
           this.option1.series[0].data = [stateList[0].c1, stateList[1].c1];
 
+          this.option2.xAxis.data = timeList.map(o=>o.createTime);
+          this.option2.series[0].data = timeList.map(o=>o.c2);
 
           // var data1 = [];
           // var data2 = [];

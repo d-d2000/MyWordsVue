@@ -23,7 +23,7 @@
             <!-- <el-button @click="addTab">添加到Tab页</el-button> -->
             <el-button v-show="word" @click="see">查看详情</el-button>
             <el-button
-              v-show="word"
+              v-show="word && userName"
               :disabled="disabledAddNewWord"
               @click="addNewWord"
               >添加到生词本</el-button
@@ -86,6 +86,10 @@ export default {
     WordDetail: WordDetail,
   },
   props: {
+    userName: {
+      type: String,
+      default: "",
+    },
     windowHeight: {
       type: Number,
     },
@@ -126,6 +130,7 @@ export default {
       this.searchText = this.searchText.replace(/[^A-Za-z]/g, "");
     },
     addNewHistory() {
+      if (!this.userName) return;
       var args = {
         historyWord: this.word.name,
         historyMean: this.word.translation,
@@ -145,6 +150,7 @@ export default {
       );
     },
     addNewWord() {
+      if (!this.userName) return;
       if (!this.word) return;
       var args = {
         newWords: this.word.name,

@@ -24,6 +24,21 @@ export default {
   color: #2c3e50;
   width: 100%;
   height: 100vh;
+  background-image: url(./assets/p1.jpg);
+  background-size: cover;
+}
+.el-header{
+  background-color: white;
+}
+.el-main > div {
+  background-color: rgba(255,255,255,1);
+}
+.el-aside{
+  background-color: rgba(255,255,255,1);
+}
+.el-main > div{
+  border-radius: 12px;
+  overflow: hidden;
 }
 // .el-header {
 //   display: flex;

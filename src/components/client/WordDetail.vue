@@ -1,5 +1,5 @@
 <template>
-  <div v-show="data" :style="{ height: contentHeight + 'px' }">
+  <div v-show="data" :style="{ height: contentHeight + 'px',padding: '20px' }">
     <div class="title">
       {{ name }}
     </div>
@@ -47,13 +47,14 @@ export default {
       wfs: [],
     };
   },
-  computed:{
+  computed: {
     displaytranslation() {
+      if (!this.translation) return "";
       return this.translation.split("\n").join("<br/>");
-    }
+    },
   },
   created() {
-    this.contentHeight = this.windowHeight - 155;
+    this.contentHeight = this.windowHeight - 195;
     this.data = this.origin_data;
     this.dataChange();
   },
@@ -75,10 +76,7 @@ export default {
       var salt = new Date().getTime();
       var curtime = Math.round(new Date().getTime() / 1000);
       var query = this.name;
-      // 多个query可以用\n连接  如 query='apple\norange\nbanana\npear'
-      var typeArr = "en::zh-CHS".split("::");
-      var from = typeArr[0];
-      var to = typeArr[1];
+      var to = "zh-CHS";
       var str1 = appKey + truncate(query) + salt + curtime + key;
       //var vocabId = "您的用户词表ID";
       //console.log('---',str1);
@@ -91,7 +89,7 @@ export default {
         appKey: appKey,
         salt: salt,
         //from: from,
-        //to: to,
+        to: to,
         sign: sign,
         signType: "v3",
         curtime: curtime,
@@ -111,6 +109,9 @@ export default {
           if (response.data.basic && response.data.basic.explains) {
             this.translation = response.data.basic.explains.join("\n");
           }
+          // if (response.data.translation) {
+          //   this.translation = response.data.translation.join("\n");
+          // }
 
           if (response.data.web) {
             this.web = response.data.web;

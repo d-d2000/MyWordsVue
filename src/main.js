@@ -34,6 +34,7 @@ Vue.filter("dateFilter", function (dataStr) {
   return `${year}年${month}月${day}日 ${hour}:${minute}:${sec}`;
 });
 
+//自己在有道翻译Api官网生成
 Vue.prototype.youdao = {
   appKey: "695964bc75e4efd0",
   key: "h8fw78HDfrYxJVVlJwvPsF9fqkttehRK",

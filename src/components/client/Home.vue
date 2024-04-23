@@ -33,8 +33,8 @@
           <div>{{ word ? word.name : "" }}</div> -->
           <br />
           <div v-show="word">
-            <div style="font-weight:bold;">中文释义：</div>
-            <br/>
+            <div style="font-weight: bold">中文释义：</div>
+            <br />
             <div v-html="means"></div>
           </div>
         </div>
@@ -61,8 +61,8 @@
           <!-- <div>{{ word2 ? word2.name : "" }}</div> -->
           <br />
           <div v-show="word2">
-            <div style="font-weight:bold;">中文释义：</div>
-            <br/>
+            <div style="font-weight: bold">中文释义：</div>
+            <br />
             <div v-html="means2"></div>
           </div>
         </div>
@@ -227,22 +227,24 @@ export default {
         params: args,
       }).then(
         (response) => {
-
-          if (
-            !response.data.isWord ||
-            !response.data.basic ||
-            !response.data.basic.explains
-          ) {
-            this.$message({
-              message: "无法查询到该单词",
-              type: "warning",
-            });
-            return;
-          }
+          //   if (
+          //     !response.data.isWord ||
+          //     !response.data.basic ||
+          //     !response.data.basic.explains
+          //   ) {
+          //     this.$message({
+          //       message: "无法查询到该单词",
+          //       type: "warning",
+          //     });
+          //     return;
+          //   }
           var word = {};
-          if (response.data.basic && response.data.basic.explains) {
-            word.translation = response.data.basic.explains.join("\n");
+          if (response.data.translation) {
+            word.translation = response.data.translation[0];
           }
+          //   if (response.data.basic && response.data.basic.explains) {
+          //     word.translation = response.data.basic.explains.join("\n");
+          //   }
           //word.translation = response.data.translation.join("\n");
           word.name = response.data.query;
 
@@ -295,8 +297,6 @@ export default {
         params: args,
       }).then(
         (response) => {
-
-
           var word = {};
           word.translation = response.data.translation.join("\n");
           word.name = response.data.query;
